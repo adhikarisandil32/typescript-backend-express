@@ -22,10 +22,9 @@ app.get("/api/send", async (req: Request, res: Response, next: NextFunction) => 
       to: "yopofo7256@cetnob.com",
       subject: "Password Reset Link",
       text: "this is the link to reset the password",
-      html: "<h2>Heading</h2>",
     })
 
-    return res.status(200).json({ success: true, message: "server ready with tyepscript", mailInfo })
+    return res.status(200).json({ success: true, message: "email sent", mailInfo })
   } catch (error) {
     console.log(error)
     return res.status(500).json(error)
