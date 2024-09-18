@@ -1,18 +1,36 @@
-import express, { Express, Response, Request, NextFunction } from "express";
-import * as http from "http";
-import { config } from "dotenv";
-import nodemailer from "nodemailer";
+import express, { Express, Response, Request, NextFunction } from "express"
+import * as http from "http"
+import { config } from "dotenv"
+import nodemailer from "nodemailer"
 
-config();
+config()
 
-const PORT: number | string = process.env.PORT || 3000;
-const app: Express = express();
+const PORT: string = process.env.PORT || "3000"
+const app: Express = express()
 
-app.get("/send", async (req: Request, res: Response, next: NextFunction) => {
-  return res.status(200).json({ success: true, message: "server ready with tyepscript" });
-});
+const smtpTransport = nodemailer.createTransport({
+  host: process.env.SMTP,
+  port: 587,
+  secure: false,
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+})
 
-// const smtpTransport = nodemailer.createTransport({ host: "smtp.google.com" });
+app.get("/api/send", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const mailInfo = await smtpTransport.sendMail({
+      from: `Sandil Adhikari <${process.env.SMTP_USER}>`,
+      to: "yopofo7256@cetnob.com",
+      subject: "Password Reset Link",
+      text: "this is the link to reset the password",
+      html: "<h2>Heading</h2>",
+    })
 
-const server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse> = http.createServer(app);
-server.listen(PORT, () => console.log(`[server] server ready at port ${PORT}`));
+    return res.status(200).json({ success: true, message: "server ready with tyepscript", mailInfo })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json(error)
+  }
+})
+
+const server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse> = http.createServer(app)
+server.listen(PORT, () => console.log(`[server] server ready at port ${PORT}`))
