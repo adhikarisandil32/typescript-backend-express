@@ -1,8 +1,9 @@
-import express, { Express, Response, Request, NextFunction } from "express"
-import * as http from "http"
 import { config } from "dotenv"
+import express, { Express, NextFunction, Request, Response } from "express"
+import * as http from "http"
 import nodemailer from "nodemailer"
 
+//Test garum hai ta
 config()
 
 const PORT: string = process.env.PORT || "3000"
